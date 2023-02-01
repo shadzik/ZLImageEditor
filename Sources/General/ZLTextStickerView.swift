@@ -95,7 +95,7 @@ class ZLTextStickerView: UIView, ZLStickerViewAdditional {
     var gesRotation: CGFloat = 0
     
     var gesScale: CGFloat = 1
-    
+
     var onOperation = false
     
     // Conver all states to model.
@@ -226,6 +226,7 @@ class ZLTextStickerView: UIView, ZLStickerViewAdditional {
             setOperation(true)
         } else if ges.state == .changed {
             updateTransform()
+            updateFontSize()
         } else if ges.state == .ended || ges.state == .cancelled {
             setOperation(false)
         }
@@ -241,6 +242,7 @@ class ZLTextStickerView: UIView, ZLStickerViewAdditional {
             setOperation(true)
         } else if ges.state == .changed {
             updateTransform()
+            updateFontSize()
         } else if ges.state == .ended || ges.state == .cancelled {
             setOperation(false)
         }
@@ -285,6 +287,21 @@ class ZLTextStickerView: UIView, ZLStickerViewAdditional {
             startTimer()
             delegate?.stickerEndOperation(self, panGes: panGes)
         }
+    }
+
+    func updateFontSize() {
+        guard let fontName = textFont?.fontName else { return }
+        let frameSize = frame.size
+
+        let center = CGPoint(x: borderView.frame.midX, y: borderView.frame.midY)
+        var frame = borderView.frame
+        frame.origin.x = center.x - frameSize.width / 2
+        frame.origin.y = center.y - frameSize.height / 2
+        frame.size = frameSize
+        borderView.frame = frame
+        label.frame = borderView.bounds.insetBy(dx: ZLTextStickerView.edgeInset, dy: ZLTextStickerView.edgeInset)
+
+        textFont = UIFont.adaptiveFontWithName(fontName: fontName, label: label)
     }
     
     func updateTransform() {
